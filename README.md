@@ -1,4 +1,4 @@
-# 🟢 Gantt Planner Web (migiva-dev)
+# 🟢 Gantt Planner Web 
 
 Aplicación web interactiva tipo **tabla de Gantt**, desarrollada con **HTML, CSS y JavaScript puro**, que permite organizar tareas por semanas de forma visual.
 
