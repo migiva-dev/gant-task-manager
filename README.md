@@ -1,66 +1,55 @@
-# 🗂️ Task Planner con Gantt (JavaScript)
+# 🟢 Gantt Planner Web (migiva-dev)
 
-Aplicación web sencilla para la gestión de tareas con visualización tipo Gantt, desarrollada con **HTML, CSS y JavaScript puro (vanilla JS)**.
+Aplicación web interactiva tipo **tabla de Gantt**, desarrollada con **HTML, CSS y JavaScript puro**, que permite organizar tareas por semanas de forma visual.
 
-Este proyecto está enfocado como práctica de frontend dentro del entorno DAW, trabajando manipulación del DOM, eventos y almacenamiento en navegador.
+El proyecto simula una herramienta básica de planificación, donde puedes añadir tareas, marcar progreso y gestionar columnas dinámicamente.
 
 ---
 
 ## 🚀 Funcionalidades
 
-- ➕ Crear tareas con:
-  - Nombre
-  - Fecha de inicio y fin
-  - Porcentaje de progreso
-  - Color personalizado
+- ➕ Añadir nuevas tareas dinámicamente  
+- ➖ Eliminar tareas seleccionadas  
+- 📅 Añadir nuevas semanas (columnas)  
+- ❌ Eliminar semanas activas  
+- ✏️ Edición directa:
+  - Nombre de tareas  
+  - Nombre de semanas  
 
-- 📊 Visualización tipo Gantt:
-  - Representación temporal de cada tarea
-  - Cálculo automático de duración
-  - Posicionamiento proporcional en la línea de tiempo
+- 🎯 Selección interactiva:
+  - Click en fila → activa tarea  
+  - Click en columna → activa semana  
 
-- 🔍 Búsqueda de tareas en tiempo real
+- 🟢 Sistema visual de progreso:
+  - Click en celda → activa/desactiva bloque  
+  - Representación visual tipo Gantt  
 
-- ✏️ Edición rápida de tareas (nombre y progreso)
-
-- 🗑️ Eliminación de tareas
-
-- 💾 Persistencia de datos con `localStorage`
-  - Los datos se mantienen al recargar la página
-
-- 📈 Estadísticas básicas:
-  - Número total de tareas
-  - Promedio de progreso
-  - Total de días planificados
+- 💾 Exportación:
+  - Descargar el estado actual como archivo HTML  
 
 ---
 
 ## 🛠️ Tecnologías utilizadas
 
-- HTML5
-- CSS3
-- JavaScript (ES6)
-- LocalStorage API
+- HTML5  
+- CSS3 (variables, diseño responsive, UI moderna)  
+- JavaScript (DOM, eventos, manipulación dinámica)  
 
 ---
 
-## 📸 Vista general
-
-> Puedes añadir aquí una captura de pantalla del proyecto
-
----
-
-## 📂 Estructura
+## 📂 Estructura del proyecto
+migiva-dev-gantt/
 ├── index.html
 └── README.md
 
-
 ---
 
-## ▶️ Cómo ejecutar el proyecto
-
+## ▶️ Cómo usar el proyecto
 1. Clonar el repositorio:
+git clone https://github.com/TU-USUARIO/migiva-dev-gantt.git
 
-```bash
-git clone https://github.com/TU-USUARIO/task-planner-gantt-js.git
+2. Abrir el archivo:
+index.html
+(No requiere instalación ni dependencias.)
 
+---
