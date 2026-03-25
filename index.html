@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>migiva-dev | gantt</title>
+
+    <style>
+      :root {
+        --line: #d1d5db;
+        --text: #0f172a;
+        --muted: #64748b;
+        --bg: #e5e7eb;
+        --card: #f3f4f6;
+        --white: #ffffff;
+        --soft: #e9edf3;
+        --active-row: #eefbf3;
+        --active-col: #dcfce7;
+        --green: #16a34a;
+        --green-dark: #15803d;
+        --warn-bg: #efe3b5;
+        --warn-border: #f59e0b;
+        --shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 42px 20px;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        background: var(--card);
+        border-radius: 18px;
+        padding: 28px 30px 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .brand {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 14px;
+        margin-bottom: 22px;
+        border-bottom: 2px solid #dbe1e8;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 21px;
+        font-weight: 800;
+        color: var(--green);
+        text-transform: lowercase;
+        letter-spacing: -0.02em;
+      }
+
+      .brand .sub {
+        color: var(--muted);
+        font-size: 13px;
+        font-style: italic;
+        text-align: right;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .sep {
+        width: 2px;
+        height: 24px;
+        background: #dde3ea;
+        margin: 0 4px;
+      }
+
+      button {
+        padding: 10px 16px;
+        border: 1px solid #c9d0d8;
+        background: #f8fafc;
+        color: #111827;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.18s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        background: #eef2f7;
+      }
+
+      #btnDownload {
+        background: var(--green);
+        border-color: var(--green);
+        color: white;
+      }
+
+      #btnDownload:hover {
+        background: var(--green-dark);
+      }
+
+      .tablebox {
+        overflow: hidden;
+        border: 1px solid #c8d0d9;
+        border-radius: 14px;
+        background: var(--white);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 14px 10px;
+        text-align: center;
+        min-width: 110px;
+        height: 50px;
+      }
+
+      th:last-child,
+      td:last-child {
+        border-right: none;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      thead th {
+        background: #e7ebf0;
+        color: #607086;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        user-select: none;
+      }
+
+      tbody td:first-child {
+        font-weight: 800;
+        color: #0f172a;
+        background: #f8fafc;
+      }
+
+      [contenteditable="true"] {
+        outline: none;
+      }
+
+      [contenteditable="true"]:focus {
+        background: #fffef2;
+      }
+
+      .active-row td {
+        background: var(--active-row) !important;
+      }
+
+      .active-row td:first-child {
+        background: #dff5e7 !important;
+      }
+
+      .active-col {
+        background: var(--active-col) !important;
+      }
+
+      .ocupado {
+        height: 28px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #22c55e, #15803d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+        animation: popIn 0.2s ease;
+      }
+
+      .ocupado::after {
+        content: "PROGRESO";
+      }
+
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: scale(0.92);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .hint {
+        margin-top: 20px;
+        background: var(--warn-bg);
+        border-left: 4px solid var(--warn-border);
+        color: #9a4f00;
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+
+      @media (max-width: 920px) {
+        .brand {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .brand .sub {
+          text-align: left;
+        }
+
+        .toolbar {
+          gap: 8px;
+        }
+
+        .sep {
+          display: none;
+        }
+
+        .tablebox {
+          overflow-x: auto;
+        }
+
+        table {
+          min-width: 760px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="brand">
+        <h1>migiva-dev | gantt</h1>
+        <div class="sub">
+          Click en un encabezado para activar columna · Click en una tarea para
+          activar fila
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button id="btnDownload">Descargar HTML</button>
+        <span class="sep"></span>
+        <button id="btnAddCol">Añadir Semana</button>
+        <button id="btnDelCol">Eliminar Semana (activa)</button>
+        <span class="sep"></span>
+        <button id="btnAddRow">Añadir Tarea</button>
+        <button id="btnDelRow">Eliminar Tarea (activa)</button>
+      </div>
+
+      <div class="tablebox">
+        <table id="gantt">
+          <thead>
+            <tr>
+              <th>Tarea</th>
+              <th contenteditable="true">Semana 1</th>
+              <th contenteditable="true">Semana 2</th>
+              <th contenteditable="true">Semana 3</th>
+              <th contenteditable="true">Semana 4</th>
+              <th contenteditable="true">Semana 5</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td contenteditable="true">Tarea 1</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td contenteditable="true">Tarea 2</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td contenteditable="true">Tarea 3</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="hint">
+        Consejo: puedes editar títulos (semanas) y nombres de tareas. La
+        selección activa se usa para borrar fila/columna.
+      </div>
+    </div>
+
+    <script>
+      const tabla = document.getElementById("gantt");
+      const theadRow = tabla.tHead.rows[0];
+      const tbody = tabla.tBodies[0];
+
+      let activeRowIndex = -1;
+      let activeColIndex = -1;
+
+      function clearActiveRow() {
+        for (let r = 0; r < tbody.rows.length; r++) {
+          tbody.rows[r].classList.remove("active-row");
+        }
+      }
+
+      function clearActiveCol() {
+        for (let c = 0; c < theadRow.cells.length; c++) {
+          theadRow.cells[c].classList.remove("active-col");
+        }
+
+        for (let r = 0; r < tbody.rows.length; r++) {
+          for (let c = 0; c < tbody.rows[r].cells.length; c++) {
+            tbody.rows[r].cells[c].classList.remove("active-col");
+          }
+        }
+      }
+
+      function setActiveRow(rIndex) {
+        activeRowIndex = rIndex;
+        clearActiveRow();
+
+        if (rIndex >= 0 && rIndex < tbody.rows.length) {
+          tbody.rows[rIndex].classList.add("active-row");
+        }
+      }
+
+      function setActiveCol(cIndex) {
+        activeColIndex = cIndex;
+        clearActiveCol();
+
+        if (cIndex >= 0 && cIndex < theadRow.cells.length) {
+          theadRow.cells[cIndex].classList.add("active-col");
+
+          for (let r = 0; r < tbody.rows.length; r++) {
+            if (tbody.rows[r].cells[cIndex]) {
+              tbody.rows[r].cells[cIndex].classList.add("active-col");
+            }
+          }
+        }
+      }
+
+      function toggleBloque(cell) {
+        if (cell.cellIndex === 0) return;
+
+        const evento = cell.querySelector(".ocupado");
+
+        if (evento) {
+          evento.remove();
+        } else {
+          const div = document.createElement("div");
+          div.className = "ocupado";
+          cell.innerHTML = "";
+          cell.appendChild(div);
+        }
+      }
+
+      function bindClicks() {
+        const bodyCells = tabla.querySelectorAll("tbody td");
+
+        bodyCells.forEach((cell) => {
+          cell.onclick = function () {
+            const rowIndex = this.parentNode.rowIndex - 1;
+            setActiveRow(rowIndex);
+
+            if (this.cellIndex !== 0) {
+              setActiveCol(this.cellIndex);
+              toggleBloque(this);
+            }
+          };
+        });
+
+        const headCells = tabla.querySelectorAll("thead th");
+        headCells.forEach((th) => {
+          th.onclick = function () {
+            if (this.cellIndex === 0) return;
+            setActiveCol(this.cellIndex);
+          };
+        });
+      }
+
+      function numSemanas() {
+        return theadRow.cells.length - 1;
+      }
+
+      function limpiarEventosEnCol(colIndex) {
+        for (let r = 0; r < tbody.rows.length; r++) {
+          const celda = tbody.rows[r].cells[colIndex];
+          if (!celda) continue;
+
+          const evento = celda.querySelector(".ocupado");
+          if (evento) evento.remove();
+        }
+      }
+
+      document.getElementById("btnAddCol").onclick = function () {
+        const n = numSemanas() + 1;
+
+        const th = document.createElement("th");
+        th.contentEditable = "true";
+        th.textContent = "Semana " + n;
+        theadRow.appendChild(th);
+
+        for (let r = 0; r < tbody.rows.length; r++) {
+          tbody.rows[r].insertCell(-1);
+        }
+
+        bindClicks();
+      };
+
+      document.getElementById("btnDelCol").onclick = function () {
+        if (activeColIndex < 1) return;
+        if (theadRow.cells.length <= 2) return;
+
+        limpiarEventosEnCol(activeColIndex);
+
+        theadRow.deleteCell(activeColIndex);
+        for (let r = 0; r < tbody.rows.length; r++) {
+          tbody.rows[r].deleteCell(activeColIndex);
+        }
+
+        activeColIndex = -1;
+        clearActiveCol();
+        bindClicks();
+      };
+
+      document.getElementById("btnAddRow").onclick = function () {
+        const filas = tbody.rows.length;
+        const cols = theadRow.cells.length;
+
+        const tr = document.createElement("tr");
+
+        const td0 = document.createElement("td");
+        td0.contentEditable = "true";
+        td0.textContent = "Tarea " + (filas + 1);
+        tr.appendChild(td0);
+
+        for (let c = 1; c < cols; c++) {
+          tr.appendChild(document.createElement("td"));
+        }
+
+        tbody.appendChild(tr);
+        bindClicks();
+      };
+
+      document.getElementById("btnDelRow").onclick = function () {
+        if (activeRowIndex < 0) return;
+        if (tbody.rows.length <= 1) return;
+
+        tbody.deleteRow(activeRowIndex);
+
+        activeRowIndex = -1;
+        clearActiveRow();
+        bindClicks();
+      };
+
+      document.getElementById("btnDownload").onclick = function () {
+        const html = "<!doctype html>\n" + document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "migiva-dev-gantt.html";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        URL.revokeObjectURL(url);
+      };
+
+      bindClicks();
+    </script>
+  </body>
+</html>
